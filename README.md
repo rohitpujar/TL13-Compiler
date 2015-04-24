@@ -3,10 +3,10 @@
 Commands to run
 ---------------
 
-flex parse.l
-bison -d parse.y
-gcc *.c -lfl
-./a.out
+1. flex parse.l
+2. bison -d parse.y
+3. gcc *.c -lfl
+4. ./a.out
 
 Input
 -----
