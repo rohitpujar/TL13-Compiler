@@ -39,7 +39,7 @@ program:
 	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4); ex($$); } 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 3, var("var"), $4, $6); }
+	VAR ident AS type SC declarations { $$ = opr(AS, 3, var($2), $4, $6); }
 	| { $$ = NULL; }
 	;
 type:
@@ -74,16 +74,16 @@ writeInt:
 	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); }
 	;
 expression:
-	simpleExpression { $$ = $1; }
+	simpleExpression { $$ = $1; printf("==== Reducing to expression \n");}
 	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); }
 	;
 simpleExpression:
 	term OP3 term { $$ = opr($2, 2, $1, $3); }
-	| term { $$ = $1; }
+	| term { $$ = $1; printf(" *** Reducing to simple expression \n");}
 	;
 term:
 	factor OP2 factor { $$ = opr($2, 2, $1, $3); }
-	| factor { $$ = $1; }
+	| factor { $$ = $1; printf(" #### Reducing to term production \n");}
 	;
 factor:
 	ident { $$ = var("var"); }
@@ -99,19 +99,21 @@ int ex(nodeType *p){
 		return 0;
 	}	
 	nodeType *ptrleft = p->op.operands[0];
-	nodeType *ptrright = p->op.operands[1];
-	if(ptrright!=NULL){
-		printf("NOT NULL \n");
-	}else
-		printf("NULLLL \n");
+	//nodeType *ptrright = p->op.operands[1];
+	//if(ptrright!=NULL){
+	//	printf("NOT NULL \n");
+	//}else
+	//	printf("NULLLL \n");
 	nodeType *left,*right;
 	left = ptrleft->op.operands[0];
 	right = ptrleft->op.operands[1];
 
 	printf("p->operation : %d\n",p->op.operation);
-	printf("ptrleft->operand : %d\n",ptrleft->op.operation);
+	printf("ptrleft->operand[0] : %d\n",ptrleft->op.operation);
 
-	printf("ptrright->operand : %d\n",ptrright->op.operation);
+	printf("left->operand[0,1] : %s\n",left->var.name);
+	printf("right->operand[0,2] : %s\n",right->str.name);
+
 	
 	
 
@@ -152,6 +154,7 @@ nodeType* str(char* str) {
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 
+	printf("	yacc yylval from #str func: %s\n",yylval);
 	pntr->type = typeStr;
 	pntr->str.name = str;
 
@@ -160,7 +163,7 @@ nodeType* str(char* str) {
 
 nodeType* var(char* name) {
 	nodeType* pntr;
-
+	printf("	yacc yylval from *var func: %s\n",yylval);
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 

@@ -793,23 +793,26 @@ YY_RULE_SETUP
 #line 21 "parse.l"
 {
 			yylval.iValue = atoi(yytext);
+			//printf("* Lex yylval : %d\n",yylval.iValue);
+			printf("\nFrom LEX: returning token=num with value=%d\n",yylval.iValue);
 			return num;
 		}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 25 "parse.l"
+#line 27 "parse.l"
 {
 			if (yytext == "false")
 				yylval.bValue = 0;
 			else
 				yylval.bValue = 1;
+			printf("\nFrom LEX: returning token=boollit with value=%d\n",yylval.bValue );
 			return boollit;
 		}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 32 "parse.l"
+#line 35 "parse.l"
 {
 			yylval.sString = NULL;
 			char* temp = malloc(sizeof(yytext));
@@ -817,166 +820,188 @@ YY_RULE_SETUP
 			yylval.sString = temp;
 			//yylval.sString = yytext;
 			//printf("	Lex yylval : %s\n",yylval);
-			printf("	Lex yytext : %s\n",yytext);
+			//printf("	Lex yytext : %s\n",yytext);
+			printf("\nFrom LEX: returning token=ident with value=%s\n", yylval.sString);
 			return ident;
 		}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 42 "parse.l"
+#line 46 "parse.l"
 {
+			printf("\nFrom LEX: returning token=LP with value=NULL" );
 			return LP;
 		}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 45 "parse.l"
+#line 50 "parse.l"
 {
+			printf("\nFrom LEX: returning token=RP with value=NULL" );
 			return RP;
 		}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 48 "parse.l"
+#line 54 "parse.l"
 {
+			printf("\nFrom LEX: returning token=ASGN with value=NULL" );
 			return ASGN;
 		}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 51 "parse.l"
+#line 58 "parse.l"
 {
+			printf("\nFrom LEX: returning token=SC with value=NULL" );
 			return SC;
 		}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 54 "parse.l"
+#line 62 "parse.l"
 {
 			yylval.iValue = stringToEnum(yytext);
+			printf("\nFrom LEX: returning token=OP2 with value=%d",yylval.iValue );
 			return OP2;
 		}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 58 "parse.l"
+#line 67 "parse.l"
 {
 			yylval.iValue = stringToEnum(yytext);
+			printf("\nFrom LEX: returning token=OP3 with value=%d",yylval.iValue );
 			return OP3;
 		}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 62 "parse.l"
+#line 72 "parse.l"
 {
 					yylval.iValue = stringToEnum(yytext);
+					printf("\nFrom LEX: returning token=OP4 with value=%d",yylval.iValue );
 					return OP4;
 				}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 66 "parse.l"
+#line 77 "parse.l"
 {
+			printf("\nFrom LEX: returning token=IF with value=NULL" );
 			return IF;
 		}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 69 "parse.l"
+#line 81 "parse.l"
 {
+			printf("\nFrom LEX: returning token=THEN with value=NULL" );
 			return THEN;
 		}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 72 "parse.l"
+#line 85 "parse.l"
 {
+			printf("\nFrom LEX: returning token=ELSE with value=NULL" );
 			return ELSE;
 		}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 75 "parse.l"
+#line 89 "parse.l"
 {
+			printf("\nFrom LEX: returning token=BEGIN_STMT with value=NULL" );
 			return BEGIN_STMT;
 		}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 78 "parse.l"
+#line 93 "parse.l"
 {
+			printf("\nFrom LEX: returning token=END with value=NULL" );
 			return END;
 		}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 81 "parse.l"
+#line 97 "parse.l"
 {
+			printf("\nFrom LEX: returning token=WHILE with value=NULL" );
 			return WHILE;
 		}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 84 "parse.l"
+#line 101 "parse.l"
 {
+			printf("\nFrom LEX: returning token=DO with value=NULL" );
 			return DO;
 		}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 87 "parse.l"
+#line 105 "parse.l"
 {
+			printf("\nFrom LEX: returning token=PROGRAM with value=NULL" );
 			return PROGRAM;
 		}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 90 "parse.l"
+#line 109 "parse.l"
 {
+			printf("\nFrom LEX: returning token=VAR with value=NULL" );
 			return VAR;
 		}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 93 "parse.l"
+#line 113 "parse.l"
 {
+			printf("\nFrom LEX: returning token=AS with value=NULL" );
 			return AS;
 		}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 96 "parse.l"
+#line 117 "parse.l"
 {
+			printf("\nFrom LEX: returning token=INT with value=NULL" );
 			return INT;
 		}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 99 "parse.l"
+#line 121 "parse.l"
 {
+			printf("\nFrom LEX: returning token=BOOL with value=NULL" );
 			return BOOL;
 		}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 102 "parse.l"
+#line 125 "parse.l"
 {
+			printf("\nFrom LEX: returning token=WRITEINT with value=NULL" );
 			return WRITEINT;
 		}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 105 "parse.l"
+#line 129 "parse.l"
 {
+			printf("\nFrom LEX: returning token=READINT with value=NULL" );
 			return READINT;
 		}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 108 "parse.l"
+#line 133 "parse.l"
 ECHO;
 	YY_BREAK
-#line 980 "lex.yy.c"
+#line 1005 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1974,7 +1999,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 108 "parse.l"
+#line 133 "parse.l"
 
 
 int stringToEnum(char* string)

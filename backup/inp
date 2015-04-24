@@ -1,0 +1,8 @@
+program
+var SMALLER as int; 
+begin 
+SMALLER := 2;
+if SMALLER > 1 then
+	SMALLER := 1;
+end
+end

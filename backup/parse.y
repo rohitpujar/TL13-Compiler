@@ -36,69 +36,95 @@ int sym[26];
 
 %%
 program:
-	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4); ex($$); } 
+	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n"); ex($$);printf("---- Reducing to program production\n"); } 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 3, var("var"), $4, $6); }
-	| { $$ = NULL; }
+	VAR ident AS type SC declarations { $$ = opr(AS, 3, var($2), $4, $6);printf("---- Reducing to declarations production\n"); }
+	| { $$ = NULL; printf("---- Reducing to declarations production\n"); }
 	;
 type:
-	INT { $$ = str("int"); }
-	| BOOL { $$ = str("int"); }
+	INT { $$ = str("int"); printf("^^^^ Reducing to type production\n"); }
+	| BOOL { $$ = str("bool"); printf("^^^^ Reducing to type production\n");}
 	;
 statementSequence:
-	statement SC statementSequence { $$ = opr(SC, 2, $1, $3); }
-	| { $$ = NULL; }
+	statement SC statementSequence { $$ = opr(SC, 2, $1, $3); printf("---- Reducing to statementSequence production \n"); }
+	| { $$ = NULL; printf("---- Reducing to statementSequence production \n");}
 	;
 statement:
-	assignment { $$ = $1; }
-	| ifStatement { $$ = $1; }
-	| whileStatement { $$ = $1; }
-	| writeInt { $$ = $1; }
+	assignment { $$ = $1;printf("---- Reducing to statement production \n"); }
+	| ifStatement { $$ = $1; printf("---- Reducing to statement production \n"); }
+	| whileStatement { $$ = $1; printf("---- Reducing to statement production \n");}
+	| writeInt { $$ = $1; printf("---- Reducing to statement production \n");}
 	;
 assignment:
-	ident ASGN expression { $$ = opr(ASGN, 2, var("var"), $3); }
-	| ident ASGN READINT { int myInt; scanf("%d", &myInt); $$ = opr(ASGN, 2, var("var"), lit(myInt)); }
+	ident ASGN expression { $$ = opr(ASGN, 2, var("var"), $3); printf("---- Reducing to assignment production \n");}
+	| ident ASGN READINT { int myInt; scanf("%d", &myInt); $$ = opr(ASGN, 2, var("var"), lit(myInt)); printf("---- Reducing to assignment production \n");}
 	;
 ifStatement:
-	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 3, $2, $4, $5); }
+	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 3, $2, $4, $5); printf("---- Reducing to ifstatement production \n");}
 	;
 elseClause:
-	ELSE statementSequence { $$ = opr(ELSE, 1, $2); }
-	| { $$ = NULL; }
+	ELSE statementSequence { $$ = opr(ELSE, 1, $2);printf("---- Reducing to elseclause production \n"); }
+	| { $$ = NULL; printf("---- Reducing to elseclause production \n");}
 	;
 whileStatement:
-	WHILE expression DO statementSequence END { $$ = opr(WHILE, 2, $2, $4); }
+	WHILE expression DO statementSequence END { $$ = opr(WHILE, 2, $2, $4);printf("---- Reducing to whilestatement production \n"); }
 	;
 writeInt:
-	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); }
+	WRITEINT expression { $$ = opr(WRITEINT, 1, $2);printf("---- Reducing to writeInt production \n"); }
 	;
 expression:
-	simpleExpression { $$ = $1; }
-	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); }
+	simpleExpression { $$ = $1; printf("==== Reducing to expression \n");}
+	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); printf("==== Reducing to expression production\n");}
 	;
 simpleExpression:
-	term OP3 term { $$ = opr($2, 2, $1, $3); }
-	| term { $$ = $1; }
+	term OP3 term { $$ = opr($2, 2, $1, $3); printf("==== Reducing to simpleexpression production\n");}
+	| term { $$ = $1; printf(" *** Reducing to simpleexpression production \n");}
 	;
 term:
-	factor OP2 factor { $$ = opr($2, 2, $1, $3); }
-	| factor { $$ = $1; }
+	factor OP2 factor { $$ = opr($2, 2, $1, $3);printf(" #### Reducing to term production \n"); }
+	| factor { $$ = $1; printf(" #### Reducing to term production \n");}
 	;
 factor:
-	ident { $$ = var("var"); }
-	| num { $$ = lit($1); }
-	| boollit { $$ = lit($1); }
-	| LP expression RP { $$ = $2; }
+	ident { $$ = var("var");printf("```` Reducing to factor production\n"); }
+	| num { $$ = lit($1); printf("```` Reducing to factor production\n"); }
+	| boollit { $$ = lit($1); printf("```` Reducing to factor production\n");}
+	| LP expression RP { $$ = $2; printf("```` Reducing to factor production\n");}
 	;
 %%
 
 int ex(nodeType *p){
 	if(!p){
-		printf("####### Tree NULL");
-		return 0;
+		printf("####### Tree NULL\n");
+		return 1;
 	}	
-	nodeType *ptrleft = p->op.operands[0];
+
+	switch(p->type){
+		case typeLit:
+			printf("Type lit : %d\n",p->lit.value);
+			break;
+		case typeVar:
+			printf("Type var : %s\n",p->var.name);
+			break;
+		case typeStr:
+			printf("Type str : %s\n",p->str.name);
+			break;
+		case typeOp:{
+			printf("Type op : %d\n",p->op.operation);
+			int count = 0;	
+			while(count<p->op.num_ops){
+				nodeType* tmpNode = p->op.operands[count];
+				count += 1;
+				ex(tmpNode);
+			}
+			break;
+		default:
+			printf("\nIn default ...\n");
+		}
+
+	}
+			
+	/*nodeType *ptrleft = p->op.operands[0];
 	//nodeType *ptrright = p->op.operands[1];
 	//if(ptrright!=NULL){
 	//	printf("NOT NULL \n");
@@ -114,7 +140,7 @@ int ex(nodeType *p){
 	printf("left->operand[0,1] : %s\n",left->var.name);
 	printf("right->operand[0,2] : %s\n",right->str.name);
 
-	
+*/	
 	
 
 	//printf("left->var.name : %s\n",left->var.name);
@@ -154,7 +180,7 @@ nodeType* str(char* str) {
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 
-	printf("	yacc yylval from #str func: %s\n",yylval);
+	//printf("	yacc yylval from #str func: %s\n",yylval);
 	pntr->type = typeStr;
 	pntr->str.name = str;
 
@@ -163,7 +189,7 @@ nodeType* str(char* str) {
 
 nodeType* var(char* name) {
 	nodeType* pntr;
-	printf("	yacc yylval from *var func: %s\n",yylval);
+	//printf("	yacc yylval from *var func: %s\n",yylval);
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 

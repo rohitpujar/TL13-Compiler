@@ -1274,169 +1274,169 @@ yyreduce:
     {
         case 2:
 #line 39 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(PROGRAM, 2, (yyvsp[-3].nPtr), (yyvsp[-1].nPtr)); ex((yyval.nPtr)); }
+    { (yyval.nPtr) = opr(PROGRAM, 2, (yyvsp[-3].nPtr), (yyvsp[-1].nPtr));printf("\n-- Tree traversal -- \n\n"); ex((yyval.nPtr));printf("---- Reducing to program production\n"); }
 #line 1279 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 42 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(AS, 3, var("var"), (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr(AS, 3, var((yyvsp[-4].sString)), (yyvsp[-2].nPtr), (yyvsp[0].nPtr));printf("---- Reducing to declarations production\n"); }
 #line 1285 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 43 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = NULL; }
+    { (yyval.nPtr) = NULL; printf("---- Reducing to declarations production\n"); }
 #line 1291 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
 #line 46 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = str("int"); }
+    { (yyval.nPtr) = str("int"); printf("^^^^ Reducing to type production\n"); }
 #line 1297 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 47 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = str("int"); }
+    { (yyval.nPtr) = str("bool"); printf("^^^^ Reducing to type production\n");}
 #line 1303 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 50 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(SC, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr(SC, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); printf("---- Reducing to statementSequence production \n"); }
 #line 1309 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 51 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = NULL; }
+    { (yyval.nPtr) = NULL; printf("---- Reducing to statementSequence production \n");}
 #line 1315 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 54 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr);printf("---- Reducing to statement production \n"); }
 #line 1321 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
 #line 55 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf("---- Reducing to statement production \n"); }
 #line 1327 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
 #line 56 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf("---- Reducing to statement production \n");}
 #line 1333 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 57 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf("---- Reducing to statement production \n");}
 #line 1339 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
 #line 60 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(ASGN, 2, var("var"), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr(ASGN, 2, var("var"), (yyvsp[0].nPtr)); printf("---- Reducing to assignment production \n");}
 #line 1345 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 61 "parse.y" /* yacc.c:1646  */
-    { int myInt; scanf("%d", &myInt); (yyval.nPtr) = opr(ASGN, 2, var("var"), lit(myInt)); }
+    { int myInt; scanf("%d", &myInt); (yyval.nPtr) = opr(ASGN, 2, var("var"), lit(myInt)); printf("---- Reducing to assignment production \n");}
 #line 1351 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 64 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(IF, 3, (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[-1].nPtr)); }
+    { (yyval.nPtr) = opr(IF, 3, (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[-1].nPtr)); printf("---- Reducing to ifstatement production \n");}
 #line 1357 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 67 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(ELSE, 1, (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr(ELSE, 1, (yyvsp[0].nPtr));printf("---- Reducing to elseclause production \n"); }
 #line 1363 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 68 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = NULL; }
+    { (yyval.nPtr) = NULL; printf("---- Reducing to elseclause production \n");}
 #line 1369 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 71 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(WHILE, 2, (yyvsp[-3].nPtr), (yyvsp[-1].nPtr)); }
+    { (yyval.nPtr) = opr(WHILE, 2, (yyvsp[-3].nPtr), (yyvsp[-1].nPtr));printf("---- Reducing to whilestatement production \n"); }
 #line 1375 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 74 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(WRITEINT, 1, (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr(WRITEINT, 1, (yyvsp[0].nPtr));printf("---- Reducing to writeInt production \n"); }
 #line 1381 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
 #line 77 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf("==== Reducing to expression \n");}
 #line 1387 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
 #line 78 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); printf("==== Reducing to expression production\n");}
 #line 1393 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 81 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); printf("==== Reducing to simpleexpression production\n");}
 #line 1399 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 82 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf(" *** Reducing to simpleexpression production \n");}
 #line 1405 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 85 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
+    { (yyval.nPtr) = opr((yyvsp[-1].iValue), 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));printf(" #### Reducing to term production \n"); }
 #line 1411 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 86 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[0].nPtr); }
+    { (yyval.nPtr) = (yyvsp[0].nPtr); printf(" #### Reducing to term production \n");}
 #line 1417 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 89 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = var("var"); }
+    { (yyval.nPtr) = var("var");printf("```` Reducing to factor production\n"); }
 #line 1423 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 90 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = lit((yyvsp[0].iValue)); }
+    { (yyval.nPtr) = lit((yyvsp[0].iValue)); printf("```` Reducing to factor production\n"); }
 #line 1429 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 91 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = lit((yyvsp[0].bValue)); }
+    { (yyval.nPtr) = lit((yyvsp[0].bValue)); printf("```` Reducing to factor production\n");}
 #line 1435 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 92 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = (yyvsp[-1].nPtr); }
+    { (yyval.nPtr) = (yyvsp[-1].nPtr); printf("```` Reducing to factor production\n");}
 #line 1441 "parse.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1674,10 +1674,36 @@ yyreturn:
 
 int ex(nodeType *p){
 	if(!p){
-		printf("####### Tree NULL");
-		return 0;
+		printf("####### Tree NULL\n");
+		return 1;
 	}	
-	nodeType *ptrleft = p->op.operands[0];
+
+	switch(p->type){
+		case typeLit:
+			printf("Type lit : %d\n",p->lit.value);
+			break;
+		case typeVar:
+			printf("Type var : %s\n",p->var.name);
+			break;
+		case typeStr:
+			printf("Type str : %s\n",p->str.name);
+			break;
+		case typeOp:{
+			printf("Type op : %d\n",p->op.operation);
+			int count = 0;	
+			while(count<p->op.num_ops){
+				nodeType* tmpNode = p->op.operands[count];
+				count += 1;
+				ex(tmpNode);
+			}
+			break;
+		default:
+			printf("\nIn default ...\n");
+		}
+
+	}
+			
+	/*nodeType *ptrleft = p->op.operands[0];
 	//nodeType *ptrright = p->op.operands[1];
 	//if(ptrright!=NULL){
 	//	printf("NOT NULL \n");
@@ -1693,7 +1719,7 @@ int ex(nodeType *p){
 	printf("left->operand[0,1] : %s\n",left->var.name);
 	printf("right->operand[0,2] : %s\n",right->str.name);
 
-	
+*/	
 	
 
 	//printf("left->var.name : %s\n",left->var.name);
@@ -1733,7 +1759,7 @@ nodeType* str(char* str) {
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 
-	printf("	yacc yylval from #str func: %s\n",yylval);
+	//printf("	yacc yylval from #str func: %s\n",yylval);
 	pntr->type = typeStr;
 	pntr->str.name = str;
 
@@ -1742,7 +1768,7 @@ nodeType* str(char* str) {
 
 nodeType* var(char* name) {
 	nodeType* pntr;
-	printf("	yacc yylval from *var func: %s\n",yylval);
+	//printf("	yacc yylval from *var func: %s\n",yylval);
 	if ((pntr = malloc(sizeof(nodeType))) == NULL)
 		yyerror("out of memory");
 

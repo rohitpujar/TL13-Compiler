@@ -21,7 +21,7 @@ GEQ_OP ">="
 [1-9][0-9]*|0	{
 			yylval.iValue = atoi(yytext);
 			//printf("* Lex yylval : %d\n",yylval.iValue);
-			printf("\nFrom LEX: returning token=num with value=%d\n",yylval.iValue);
+			printf("\nFrom LEX: returning token=num with value=%d",yylval.iValue);
 			return num;
 		}
 false|true	{
@@ -29,7 +29,7 @@ false|true	{
 				yylval.bValue = 0;
 			else
 				yylval.bValue = 1;
-			printf("\nFrom LEX: returning token=boollit with value=%d\n",yylval.bValue );
+			printf("\nFrom LEX: returning token=boollit with value=%d",yylval.bValue );
 			return boollit;
 		}
 [A-Z][A-Z0-9]*	{
@@ -40,7 +40,7 @@ false|true	{
 			//yylval.sString = yytext;
 			//printf("	Lex yylval : %s\n",yylval);
 			//printf("	Lex yytext : %s\n",yytext);
-			printf("\nFrom LEX: returning token=ident with value=%s\n", yylval.sString);
+			printf("\nFrom LEX: returning token=ident with value=%s", yylval.sString);
 			return ident;
 		}
 "("		{
