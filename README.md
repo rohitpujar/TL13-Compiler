@@ -1,5 +1,13 @@
 # compiler
 
+Commands to run
+---------------
+
+flex parse.l
+bison -d parse.y
+gcc *.c -lfl
+./a.out
+
 Input
 -----
 
