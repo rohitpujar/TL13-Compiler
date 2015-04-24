@@ -1280,7 +1280,7 @@ yyreduce:
 
   case 3:
 #line 42 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(AS, 3, var((yyvsp[-4].sString)), (yyvsp[-2].nPtr), (yyvsp[0].nPtr));printf("---- Reducing to declarations production\n"); }
+    { (yyval.nPtr) = opr(AS, 4, (yyvsp[-2].nPtr),var((yyvsp[-4].sString)),str(";"),(yyvsp[0].nPtr));printf("---- Reducing to declarations production\n"); }
 #line 1285 "parse.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1340,13 +1340,13 @@ yyreduce:
 
   case 13:
 #line 60 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = opr(ASGN, 2, var("var"), (yyvsp[0].nPtr)); printf("---- Reducing to assignment production \n");}
+    { (yyval.nPtr) = opr(ASGN, 2, var((yyvsp[-2].sString)), (yyvsp[0].nPtr)); printf("---- Reducing to assignment production \n");}
 #line 1345 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 61 "parse.y" /* yacc.c:1646  */
-    { int myInt; scanf("%d", &myInt); (yyval.nPtr) = opr(ASGN, 2, var("var"), lit(myInt)); printf("---- Reducing to assignment production \n");}
+    { (yyval.nPtr) = opr(ASGN, 2, var((yyvsp[-2].sString)), opr(READINT,0)); printf("---- Reducing to assignment production \n");}
 #line 1351 "parse.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1418,7 +1418,7 @@ yyreduce:
 
   case 26:
 #line 89 "parse.y" /* yacc.c:1646  */
-    { (yyval.nPtr) = var("var");printf("```` Reducing to factor production\n"); }
+    { (yyval.nPtr) = var((yyvsp[0].sString));printf("```` Reducing to factor production\n"); }
 #line 1423 "parse.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1672,24 +1672,82 @@ yyreturn:
 #line 94 "parse.y" /* yacc.c:1906  */
 
 
+char* getStringForConstant(int num){
+	switch(num){
+		case 1:
+			return "*";
+		case 2:
+			return "/";
+		case 3:
+			return "%";
+		case 4:
+			return "+";
+		case 5:
+			return "-";
+		case 6:
+			return "==";
+		case 7:
+			return "!=";
+		case 8:
+			return "<";
+		case 9:
+			return ">";
+		case 10:
+			return "<=";
+		case 11:
+			return ">=";
+		case 264 :
+			return "(";		
+		case 265:
+			return ")";		
+		case 266:
+			return "=";		
+		case 267:
+			return ";";		
+		case 270:
+			return "if";		
+		case 271:
+			return "{";		
+		case 272:
+			return "else";		
+		case 274:
+			return "}";		
+		case 275:
+			return "while";		
+		case 276:
+			return "{";		
+		case 277:
+			return "{";		
+		case 280:
+			return "printf()";		
+		case 281:
+			return "scanf()";		
+		default:
+		//	printf("******** Other symbol encountered ******** \n\n");
+			return "";
+	
+	}
+}
+
 int ex(nodeType *p){
+	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
-		printf("####### Tree NULL\n");
+	//	printf("####### Tree NULL\n");
 		return 1;
 	}	
 
 	switch(p->type){
 		case typeLit:
-			printf("Type lit : %d\n",p->lit.value);
+			printf("%d\n",p->lit.value);
 			break;
 		case typeVar:
-			printf("Type var : %s\n",p->var.name);
+			printf("%s\n",p->var.name);
 			break;
 		case typeStr:
-			printf("Type str : %s\n",p->str.name);
+			printf("%s\n",p->str.name);
 			break;
 		case typeOp:{
-			printf("Type op : %d\n",p->op.operation);
+			printf("%s\n",getStringForConstant(p->op.operation));
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
@@ -1697,11 +1755,11 @@ int ex(nodeType *p){
 				ex(tmpNode);
 			}
 			break;
+			}
 		default:
-			printf("\nIn default ...\n");
-		}
-
+			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
+//	printf("	====================== Return from current level ========================\n");
 			
 	/*nodeType *ptrleft = p->op.operands[0];
 	//nodeType *ptrright = p->op.operands[1];
