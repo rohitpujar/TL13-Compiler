@@ -1,0 +1,40 @@
+int ex(nodeType *p){
+	if(!p){
+		printf("####### Tree NULL");
+		return 0;
+	}	
+	nodeType *ptrleft = p->op.operands[0];
+	nodeType *ptrright = p->op.operands[1];
+	if(ptrright!=NULL){
+		printf("NOT NULL \n");
+	}else
+		printf("NULLLL \n");
+	nodeType *left,*right;
+	left = ptrleft->op.operands[0];
+	right = ptrleft->op.operands[1];
+
+	printf("p->operation : %d\n",p->op.operation);
+	printf("ptrleft->operand : %d\n",ptrleft->op.operation);
+
+	printf("ptrright->operand : %d\n",ptrright->op.operation);
+	
+	
+
+	//printf("left->var.name : %s\n",left->var.name);
+	//printf("right->str.name : %s\n",right->str.name);
+	//printf("right->var.name : %s\n",left->var.name);
+	
+	
+/*	if(p->type == typeLit)
+		printf("-- p is of type literal --");
+	if(p->type == typeVar)
+		printf("-- p is of type variable --");
+	if(p->type == typeOp){
+		printf("-- p is of type operator --");
+		printf("*Operator value %d : ",p->op.operation);
+	}
+	if(p->type == typeStr)
+		printf("-- p is of type string --");
+//return 1;
+i*/
+}
