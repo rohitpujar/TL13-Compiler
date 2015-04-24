@@ -3,7 +3,6 @@
 Input
 -----
 
-
 program
    var SMALLER as int ;
    var BIGGER as int ;
