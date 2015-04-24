@@ -1,0 +1,56 @@
+program:
+	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4); ex($$); } 
+	;
+declarations:
+	VAR ident AS type SC declarations { $$ = opr(AS, 3, var($2), $4, $6); }
+	| { $$ = NULL; }
+	;
+type:
+	INT { $$ = str("int"); }
+	| BOOL { $$ = str("int"); }
+	;
+statementSequence:
+	statement SC statementSequence { $$ = opr(SC, 2, $1, $3); }
+	| { $$ = NULL; }
+	;
+statement:
+	assignment { $$ = $1; }
+	| ifStatement { $$ = $1; }
+	| whileStatement { $$ = $1; }
+	| writeInt { $$ = $1; }
+	;
+assignment:
+	ident ASGN expression { $$ = opr(ASGN, 2, var("var"), $3); }
+	| ident ASGN READINT { int myInt; scanf("%d", &myInt); $$ = opr(ASGN, 2, var("var"), lit(myInt)); }
+	;
+ifStatement:
+	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 3, $2, $4, $5); }
+	;
+elseClause:
+	ELSE statementSequence { $$ = opr(ELSE, 1, $2); }
+	| { $$ = NULL; }
+	;
+whileStatement:
+	WHILE expression DO statementSequence END { $$ = opr(WHILE, 2, $2, $4); }
+	;
+writeInt:
+	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); }
+	;
+expression:
+	simpleExpression { $$ = $1; printf("==== Reducing to expression \n");}
+	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); }
+	;
+simpleExpression:
+	term OP3 term { $$ = opr($2, 2, $1, $3); }
+	| term { $$ = $1; printf(" *** Reducing to simple expression \n");}
+	;
+term:
+	factor OP2 factor { $$ = opr($2, 2, $1, $3); }
+	| factor { $$ = $1; printf(" #### Reducing to term production \n");}
+	;
+factor:
+	ident { $$ = var("var"); }
+	| num { $$ = lit($1); }
+	| boollit { $$ = lit($1); }
+	| LP expression RP { $$ = $2; }
+	;
