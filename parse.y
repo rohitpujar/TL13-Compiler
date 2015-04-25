@@ -39,7 +39,7 @@ program:
 	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n"); ex($$);printf("---- Reducing to program production\n"); } 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 3, var($2), $4, $6);printf("---- Reducing to declarations production\n"); }
+	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),str(";"),$6);printf("---- Reducing to declarations production\n"); }
 	| { $$ = NULL; printf("---- Reducing to declarations production\n"); }
 	;
 type:
@@ -58,7 +58,7 @@ statement:
 	;
 assignment:
 	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); printf("---- Reducing to assignment production \n");}
-	| ident ASGN READINT { int myInt; scanf("%d", &myInt); $$ = opr(ASGN, 2, var($1), lit(myInt)); printf("---- Reducing to assignment production \n");}
+	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); printf("---- Reducing to assignment production \n");}
 	;
 ifStatement:
 	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 3, $2, $4, $5); printf("---- Reducing to ifstatement production \n");}
@@ -95,6 +95,28 @@ factor:
 
 char* getStringForConstant(int num){
 	switch(num){
+		case 0:
+			return "*";
+		case 1:
+			return "/";
+		case 2:
+			return "%";
+		case 3:
+			return "+";
+		case 4:
+			return "-";
+		case 5:
+			return "==";
+		case 6:
+			return "!=";
+		case 7:
+			return "<";
+		case 8:
+			return ">";
+		case 9:
+			return "<=";
+		case 10:
+			return ">=";
 		case 264 :
 			return "(";		
 		case 265:
@@ -115,6 +137,8 @@ char* getStringForConstant(int num){
 			return "while";		
 		case 276:
 			return "{";		
+		case 277:
+			return "{";		
 		case 280:
 			return "printf()";		
 		case 281:
@@ -127,36 +151,37 @@ char* getStringForConstant(int num){
 }
 
 int ex(nodeType *p){
-	printf("	---------------------- Next Level -----------------------------\n");
+	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
-		printf("####### Tree NULL\n");
+	//	printf("####### Tree NULL\n");
 		return 1;
 	}	
 
 	switch(p->type){
-		case typeLit:
-			printf("Type lit : %d\n",p->lit.value);
-			break;
-		case typeVar:
-			printf("Type var : %s\n",p->var.name);
-			break;
-		case typeStr:
-			printf("Type str : %s\n",p->str.name);
-			break;
 		case typeOp:{
-			printf("Type op : %s\n",getStringForConstant(p->op.operation));
+			printf("%s ",getStringForConstant(p->op.operation));
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
 				count += 1;
 				ex(tmpNode);
 			}
+			//printf("%s\n",getStringForConstant(p->op.operation));
 			break;
 			}
+		case typeLit:
+			printf("%d ",p->lit.value);
+			break;
+		case typeVar:
+			printf("%s ",p->var.name);
+			break;
+		case typeStr:
+			printf("%s ",p->str.name);
+			break;
 		default:
-			printf("\nIn default ...\n");
+			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
-	printf("	====================== Return from current level ========================\n");
+//	printf("	====================== Return from current level ========================\n");
 			
 	/*nodeType *ptrleft = p->op.operands[0];
 	//nodeType *ptrright = p->op.operands[1];
