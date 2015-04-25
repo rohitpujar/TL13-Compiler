@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "node.h"
+#include "bufferutil.h"
 extern FILE *yyin;
+char* buffer[];
 typedef enum { false, true } bool;
 
 //Function prototypes
@@ -36,7 +38,11 @@ int sym[26];
 
 %%
 program:
-	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n"); ex($$);printf("---- Reducing to program production\n"); } 
+	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n"); 
+	initializeBuffer(buffer); 
+	printBuffer(buffer); 
+	ex($$);
+	printf("---- Reducing to program production\n"); } 
 	;
 declarations:
 	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),str(";"),$6);printf("---- Reducing to declarations production\n"); }
@@ -150,6 +156,10 @@ char* getStringForConstant(int num){
 	}
 }
 
+void handleBuffer(){
+
+}
+
 int ex(nodeType *p){
 	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
@@ -158,17 +168,6 @@ int ex(nodeType *p){
 	}	
 
 	switch(p->type){
-		case typeOp:{
-			printf("%s ",getStringForConstant(p->op.operation));
-			int count = 0;	
-			while(count<p->op.num_ops){
-				nodeType* tmpNode = p->op.operands[count];
-				count += 1;
-				ex(tmpNode);
-			}
-			//printf("%s\n",getStringForConstant(p->op.operation));
-			break;
-			}
 		case typeLit:
 			printf("%d ",p->lit.value);
 			break;
@@ -178,6 +177,19 @@ int ex(nodeType *p){
 		case typeStr:
 			printf("%s ",p->str.name);
 			break;
+		case typeOp:{
+			printf("%s ",getStringForConstant(p->op.operation));
+			/*switch(p->op.operation):
+				case ';':
+			*/						
+			int count = 0;	
+			while(count<p->op.num_ops){
+				nodeType* tmpNode = p->op.operands[count];
+				count += 1;
+				ex(tmpNode);
+			}
+			break;
+			}
 		default:
 			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
