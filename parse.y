@@ -45,7 +45,7 @@ program:
 	printf("---- Reducing to program production\n"); } 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),str(";"),$6);printf("---- Reducing to declarations production\n"); }
+	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);printf("---- Reducing to declarations production\n"); }
 	| { $$ = NULL; printf("---- Reducing to declarations production\n"); }
 	;
 type:
@@ -178,10 +178,22 @@ int ex(nodeType *p){
 			printf("%s ",p->str.name);
 			break;
 		case typeOp:{
-			printf("%s ",getStringForConstant(p->op.operation));
-			/*switch(p->op.operation):
-				case ';':
-			*/						
+			//printf("%s ",getStringForConstant(p->op.operation));
+			//printf("Printing ----- op.operation,");
+		        //printf(" Operation value ==> %d\n",p->op.operation);		
+			printBuffer(buffer);
+			if(p->op.operation == 267){
+				switch(p->op.operation){
+					case 267: //comma
+						addToBuffer(buffer,getStringForConstant(p->op.operation));
+						printBuffer(buffer);
+						break;
+					default:
+						printf("====To be unseen");
+					}
+			}
+			else
+				printf("%s ",getStringForConstant(p->op.operation));
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
@@ -190,6 +202,7 @@ int ex(nodeType *p){
 			}
 			break;
 			}
+		
 		default:
 			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
