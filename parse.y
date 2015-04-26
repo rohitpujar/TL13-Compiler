@@ -186,6 +186,7 @@ int ex(nodeType *p){
 					addToBuffer(buffer,getStringForConstant(p->op.operation));
 					nodeType* left;
 					nodeType* right;
+					printf("&&&&&&&& NUM_OPS : %d",p->op.num_ops);
 					left = p->op.operands[0];
 					right = p->op.operands[1];
 					printf("%s = ",left->var.name);
