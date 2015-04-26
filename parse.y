@@ -38,9 +38,9 @@ int sym[26];
 
 %%
 program:
-	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n"); 
-	initializeBuffer(buffer); 
-	printBuffer(buffer); 
+	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n");
+	initializeBuffer(buffer);
+	printBuffer(buffer);
 	ex($$);
 	printf("---- Reducing to program production\n"); } 
 	;
@@ -156,10 +156,6 @@ char* getStringForConstant(int num){
 	}
 }
 
-void handleBuffer(){
-
-}
-
 int ex(nodeType *p){
 	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
@@ -178,22 +174,13 @@ int ex(nodeType *p){
 			printf("%s ",p->str.name);
 			break;
 		case typeOp:{
-			//printf("%s ",getStringForConstant(p->op.operation));
-			//printf("Printing ----- op.operation,");
-		        //printf(" Operation value ==> %d\n",p->op.operation);		
 			printBuffer(buffer);
+			printf("%s ",getStringForConstant(p->op.operation));
+			
 			if(p->op.operation == 267){
-				switch(p->op.operation){
-					case 267: //comma
-						addToBuffer(buffer,getStringForConstant(p->op.operation));
-						printBuffer(buffer);
-						break;
-					default:
-						printf("====To be unseen");
-					}
+				addToBuffer(buffer,getStringForConstant(p->op.operation));
 			}
-			else
-				printf("%s ",getStringForConstant(p->op.operation));
+			printBuffer(buffer);
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
@@ -202,7 +189,6 @@ int ex(nodeType *p){
 			}
 			break;
 			}
-		
 		default:
 			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
