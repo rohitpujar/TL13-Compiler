@@ -156,6 +156,20 @@ char* getStringForConstant(int num){
 	}
 }
 
+void printNode(nodeType* tmpNode){
+	switch(tmpNode->type){			
+		case typeLit:
+			printf("%d ",tmpNode->lit.value);
+			break;
+		case typeVar:
+			printf("%s ",tmpNode->var.name);
+			break;
+		case typeStr:
+			printf("%s ",tmpNode->str.name);
+		break;
+	}
+}
+
 int ex(nodeType *p){
 	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
@@ -179,23 +193,43 @@ int ex(nodeType *p){
 			
 			
 		       	switch(p->op.operation){
-				case 267:
+				case 267: //semicolon
 					addToBuffer(buffer,getStringForConstant(p->op.operation));
 					break;
-				case 266:
+				case 266: //equals
 					addToBuffer(buffer,getStringForConstant(p->op.operation));
 					nodeType* left;
 					nodeType* right;
-					printf("&&&&&&&& NUM_OPS : %d",p->op.num_ops);
+					//printf("&&&&&&&& NUM_OPS : %d \n",p->op.num_ops);
 					left = p->op.operands[0];
 					right = p->op.operands[1];
 					printf("%s = ",left->var.name);
 					//operand1 can either be var or anothner lit
-					if(right->type == typeLit)
-						printf("%d;\n",right->lit.value);
-					else if(right->type == typeVar)
-						printf("%s;\n",right->var.name);
+					if(right->type!=typeOp){
+						if(right->type == typeLit)
+							printf("%d;\n",right->lit.value);
+						else if(right->type == typeVar)
+							printf("%s;\n",right->var.name);
+					} 
+					else{
+						if(right->op.operation==281){
+						// TO-DO
+						printf("`scanf ");
+						}
+						else{
+							//printf("%s ",getStringForConstant(right->op.operation));
+							nodeType* leftOfOp;
+							nodeType* rightOfOp;
+							leftOfOp = right->op.operands[0];
+							rightOfOp = right->op.operands[1];
+							printNode(leftOfOp); 	
+							printf("%s ",getStringForConstant(right->op.operation));
+							printNode(rightOfOp); 	
+					         	}
 						
+					//	printf("&&&& Expecting 2 NUM_OPS : %d \n",right->op.num_ops);
+						
+					}		
 					initializeBuffer(buffer);
 					//printf("Left content : %s\n",left->var.name);
 					//printf("Right content : %d\n",right->lit.value);
@@ -213,44 +247,7 @@ int ex(nodeType *p){
 		default:
 			printf("\nIn default ...... :o :o :o :o :o :o :o :o :o \n");
 	}
-//	printf("	====================== Return from current level ========================\n");
-			
-	/*nodeType *ptrleft = p->op.operands[0];
-	//nodeType *ptrright = p->op.operands[1];
-	//if(ptrright!=NULL){
-	//	printf("NOT NULL \n");
-	//}else
-	//	printf("NULLLL \n");
-	nodeType *left,*right;
-	left = ptrleft->op.operands[0];
-	right = ptrleft->op.operands[1];
 
-	printf("p->operation : %d\n",p->op.operation);
-	printf("ptrleft->operand[0] : %d\n",ptrleft->op.operation);
-
-	printf("left->operand[0,1] : %s\n",left->var.name);
-	printf("right->operand[0,2] : %s\n",right->str.name);
-
-*/	
-	
-
-	//printf("left->var.name : %s\n",left->var.name);
-	//printf("right->str.name : %s\n",right->str.name);
-	//printf("right->var.name : %s\n",left->var.name);
-	
-	
-/*	if(p->type == typeLit)
-		printf("-- p is of type literal --");
-	if(p->type == typeVar)
-		printf("-- p is of type variable --");
-	if(p->type == typeOp){
-		printf("-- p is of type operator --");
-		printf("*Operator value %d : ",p->op.operation);
-	}
-	if(p->type == typeStr)
-		printf("-- p is of type string --");
-//return 1;
-i*/
 }
 
 nodeType* lit(int value) {
