@@ -28,21 +28,22 @@ void addToBuffer(char* buffer[],char str[]){
 	tmp =(char *) malloc(len*sizeof(char));
 	strcpy(tmp,str);
 	buffer[i]=tmp;
+	printf("									 #Added %s to buffer\n",buffer[i]);
 }
 
 void printBuffer(char* buffer[]){
-	printf("* Printing buffer \n");
+//	printf("* Printing buffer \n");
 	int i=0;
 	if(buffer[0]=='\0'){
-		printf("- buffer empty\n");
+		//printf("- buffer empty\n");
 	}
 	for(i=0;buffer[i]!='\0';i++){
-		printf("Buffer[%d] : %s\n",i,buffer[i]);
+		printf("									*Buffer[%d] = %s\n",i,buffer[i]);
 	}
 }
 
 void initializeBuffer(char *buffer[]){
-	printf("* Initializing buffer \n");
+	printf("										*Initializing buffer \n");
         int i = 0;
 	for(i=0;i<10;i++){
 		buffer[i]='\0';
