@@ -178,11 +178,29 @@ int ex(nodeType *p){
 			printf("%s ",getStringForConstant(p->op.operation));
 			
 			
-		       	if(p->op.operation == 267){
-				char *tmp = getStringForConstant(p->op.operation);
-				addToBuffer(buffer,tmp);
+		       	switch(p->op.operation){
+				case 267:
+					addToBuffer(buffer,getStringForConstant(p->op.operation));
+					break;
+				case 266:
+					addToBuffer(buffer,getStringForConstant(p->op.operation));
+					nodeType* left;
+					nodeType* right;
+					left = p->op.operands[0];
+					right = p->op.operands[1];
+					printf("%s = ",left->var.name);
+					//operand1 can either be var or anothner lit
+					if(right->type == typeLit)
+						printf("%d;\n",right->lit.value);
+					else if(right->type == typeVar)
+						printf("%s;\n",right->var.name);
+						
+					initializeBuffer(buffer);
+					//printf("Left content : %s\n",left->var.name);
+					//printf("Right content : %d\n",right->lit.value);
+					return;
 			} 
-			printBuffer(buffer);
+			//printBuffer(buffer);
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
