@@ -174,12 +174,14 @@ int ex(nodeType *p){
 			printf("%s ",p->str.name);
 			break;
 		case typeOp:{
-			printBuffer(buffer);
+			//printBuffer(buffer);
 			printf("%s ",getStringForConstant(p->op.operation));
 			
-			if(p->op.operation == 267){
-				addToBuffer(buffer,getStringForConstant(p->op.operation));
-			}
+			
+		       	if(p->op.operation == 267){
+				char *tmp = getStringForConstant(p->op.operation);
+				addToBuffer(buffer,tmp);
+			} 
 			printBuffer(buffer);
 			int count = 0;	
 			while(count<p->op.num_ops){
