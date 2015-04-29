@@ -41,7 +41,10 @@ int sym[26];
 
 %%
 program:
-	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 2, $2, $4);printf("\n-- Tree traversal -- \n\n");
+	PROGRAM declarations BEGIN_STMT statementSequence END { $$ = opr(PROGRAM, 3, $2, $4,str("end"));
+	printf("\n-- Tree traversal -- \n\n");
+	printf("#include<stdio.h>\n");
+	printf("void main()\n");
 	initializeBuffer(buffer);
 	printBuffer(buffer);
 	ex($$);
@@ -71,14 +74,14 @@ assignment:
 	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); printf("---- Reducing to assignment production \n");}
 	;
 ifStatement:
-	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 3, $2, $4, $5); printf("---- Reducing to ifstatement production \n");}
+	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 4, $2, $4, $5, str("end")); printf("---- Reducing to ifstatement production \n");}
 	;
 elseClause:
 	ELSE statementSequence { $$ = opr(ELSE, 1, $2);printf("---- Reducing to elseclause production \n"); }
 	| { $$ = NULL; printf("---- Reducing to elseclause production \n");}
 	;
 whileStatement:
-	WHILE expression DO statementSequence END { $$ = opr(WHILE, 2, $2, $4);printf("---- Reducing to whilestatement production \n"); }
+	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end"));printf("---- Reducing to whilestatement production \n"); }
 	;
 writeInt:
 	WRITEINT expression { $$ = opr(WRITEINT, 1, $2);printf("---- Reducing to writeInt production \n"); }
@@ -181,14 +184,9 @@ char* readExpr(nodeType* p){
 			return p->var.name;
 			break;
 		case typeLit:{
-			//char* temp;
-			//strcpy(temp,bufferForReadExpr);
-			//bufferForReadExpr = NULL;
 			sprintf(bufferForReadExpr,"%d",p->lit.value);
-		//	printf("^buffer cint : %s\n",bufferForReadExpr);
 			char* temp = malloc(sizeof(bufferForReadExpr));
 			strcpy(temp,bufferForReadExpr);
-		//	printf("&Temp val : %s\n",temp);
 		 	return temp; 
 			break;
 			}
@@ -198,13 +196,9 @@ char* readExpr(nodeType* p){
 			part1 = readExpr(p->op.operands[0]);
 			part3 = readExpr(p->op.operands[1]);
 			if(part1!=NULL && part3!=NULL){
-				//printf("part1 cont : %s\n",part1);
-				//printf("part3 cont : %s\n",part3);
 			}
 		 	strcat(part1,part2);
-		//	printf("after first concat part1 : %s\n",part1);
 			strcat(part1,part3);
-		//	printf("final concat part1 : %s\n",part1);
 			return part1;
 			break;
 		}
@@ -212,7 +206,6 @@ char* readExpr(nodeType* p){
 }
 
 int ex(nodeType *p){
-	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
 	//	printf("####### Tree NULL\n");
 		return 1;
@@ -225,14 +218,14 @@ int ex(nodeType *p){
 		case typeVar:
 			printf("%s; ",p->var.name);
 			break;
-		case typeStr:
-			printf("%s ",p->str.name);
+		case typeStr:{
+			if(strcmp(p->str.name,"end")==0)
+				printf("\n}\n");
+			else
+				printf("%s ",p->str.name);
 			break;
+			}
 		case typeOp:{
-			//printBuffer(buffer);
-			//printf("%s ",getStringForConstant(p->op.operation));
-			
-			
 		       	switch(p->op.operation){
 				case 280://printf
 					{
@@ -273,68 +266,17 @@ int ex(nodeType *p){
 					initializeBuffer(buffer);
 					break;
 
-					/*
-					addToBuffer(buffer,getStringForConstant(p->op.operation));
-					nodeType* left;
-					nodeType* right;
-					//printf("&&&&&&&& NUM_OPS : %d \n",p->op.num_ops);
-					left = p->op.operands[0];
-					right = p->op.operands[1];
-					printf("%s = ",left->var.name);
-					//operand1 can either be var or anothner lit
-					if(right->type!=typeOp){
-						if(right->type == typeLit)
-							printf("%d;\n",right->lit.value);
-						else if(right->type == typeVar)
-							printf("%s;\n",right->var.name);
-					} 
-					else{
-						if(right->op.operation==281){
-						// TO-DO
-						printf("`scanf ");
-						}
-						else{
-							//printf("%s ",getStringForConstant(right->op.operation));
-							nodeType* leftOfOp;
-							nodeType* rightOfOp;
-							leftOfOp = right->op.operands[0];
-							rightOfOp = right->op.operands[1];
-							printNode(leftOfOp); 	
-							printf("%s ",getStringForConstant(right->op.operation));
-							printNode(rightOfOp); 	
-					         	}
-						
-					//	printf("&&&& Expecting 2 NUM_OPS : %d \n",right->op.num_ops);
-						
-					}		
-					initializeBuffer(buffer);
-					//printf("Left content : %s\n",left->var.name);
-					//printf("Right content : %d\n",right->lit.value);
-					return;*/
 			 	case 270: {//If case
-					//printf("**Num od children in for IF : %d\n",p->op.num_ops);	
 					nodeType* condition = p->op.operands[0];
-					//printf("Op operation value :  %d\n",condition->op.operation);
-					//printf("No. of children of < = %d\n",condition->op.num_ops);
-					//printf("left expr = %s\n",readExpr(condition->op.operands[0]));		
-					//printf("right expr = %s\n",readExpr(condition->op.operands[1]));	
 					printf("\nif (%s %s %s){",readExpr(condition->op.operands[0]),getStringForConstant(condition->op.operation),
 						readExpr(condition->op.operands[1]));
-					/*if(p->op.operands[2]!=NULL)
-						printf("NOT NULL");
-					else
-						printf(">>>>>>>>>>>>>>>>>>>Operands of 2 isNULL\n");*/
-					//p = p->op.operands[1];			
 					}
 					break;
 				case 275: {//while case
-					//printf("+++ While +++\n");
 					nodeType* condition1 = p->op.operands[0];
-					//printf("++ ---\n ");
 					printf("\nwhile (%s %s %s){",
 					readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
 						readExpr(condition1->op.operands[1]));
-					//p = p->op.operands[1];			
 
 					}
 					break;
@@ -344,7 +286,6 @@ int ex(nodeType *p){
 					break;
 				}	
 
-			//printBuffer(buffer);
 			int count = 0;	
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];

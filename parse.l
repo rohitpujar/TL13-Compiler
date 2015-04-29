@@ -130,6 +130,7 @@ false|true	{
 			printf("\nFrom LEX: returning token=READINT with value=NULL" );
 			return READINT;
 		}
+
 %%
 int stringToEnum(char* string)
 {
