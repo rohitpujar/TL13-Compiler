@@ -7,6 +7,7 @@
 #include <string.h>
 extern FILE *yyin;
 char* buffer[];
+char bufferForReadExpr[20];
 typedef enum { false, true } bool;
 
 //Function prototypes
@@ -179,13 +180,15 @@ char* readExpr(nodeType* p){
 			return p->var.name;
 			break;
 		case typeLit:{
-			char* bufferForReadExpr[20];
 			//char* temp;
 			//strcpy(temp,bufferForReadExpr);
 			//bufferForReadExpr = NULL;
 			sprintf(bufferForReadExpr,"%d",p->lit.value);
 			printf("^buffer cint : %s\n",bufferForReadExpr);
-		 	return bufferForReadExpr; 
+			char* temp = malloc(sizeof(bufferForReadExpr));
+			strcpy(temp,bufferForReadExpr);
+			printf("&Temp val : %s\n",temp);
+		 	return temp; 
 			break;
 			}
 		case typeOp:{
@@ -198,6 +201,7 @@ char* readExpr(nodeType* p){
 				printf("part3 cont : %s\n",part3);
 			}
 		 	strcat(part1,part2);
+			printf("after first concat part1 : %s\n",part1);
 			strcat(part1,part3);
 			printf("final concat part1 : %s\n",part1);
 			return part1;
