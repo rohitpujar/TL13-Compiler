@@ -6,7 +6,7 @@
 #include "bufferutil.h"
 #include <string.h>
 extern FILE *yyin;
-char* buffer[];
+char* buffer[1];
 char bufferForReadExpr[20];
 typedef enum { false, true } bool;
 
@@ -331,7 +331,8 @@ int ex(nodeType *p){
 					//printf("+++ While +++\n");
 					nodeType* condition1 = p->op.operands[0];
 					//printf("++ ---\n ");
-					printf("\nwhile (%s %s %s){",readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
+					printf("\nwhile (%s %s %s){",
+					readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
 						readExpr(condition1->op.operands[1]));
 					//p = p->op.operands[1];			
 
