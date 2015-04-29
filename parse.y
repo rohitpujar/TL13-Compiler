@@ -45,7 +45,8 @@ program:
 	initializeBuffer(buffer);
 	printBuffer(buffer);
 	ex($$);
-	printf("---- Reducing to program production\n"); } 
+	//printf("\n\n---- Reducing to program production\n"); 
+	} 
 	;
 declarations:
 	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);printf("---- Reducing to declarations production\n"); }
@@ -184,10 +185,10 @@ char* readExpr(nodeType* p){
 			//strcpy(temp,bufferForReadExpr);
 			//bufferForReadExpr = NULL;
 			sprintf(bufferForReadExpr,"%d",p->lit.value);
-			printf("^buffer cint : %s\n",bufferForReadExpr);
+		//	printf("^buffer cint : %s\n",bufferForReadExpr);
 			char* temp = malloc(sizeof(bufferForReadExpr));
 			strcpy(temp,bufferForReadExpr);
-			printf("&Temp val : %s\n",temp);
+		//	printf("&Temp val : %s\n",temp);
 		 	return temp; 
 			break;
 			}
@@ -197,13 +198,13 @@ char* readExpr(nodeType* p){
 			part1 = readExpr(p->op.operands[0]);
 			part3 = readExpr(p->op.operands[1]);
 			if(part1!=NULL && part3!=NULL){
-				printf("part1 cont : %s\n",part1);
-				printf("part3 cont : %s\n",part3);
+				//printf("part1 cont : %s\n",part1);
+				//printf("part3 cont : %s\n",part3);
 			}
 		 	strcat(part1,part2);
-			printf("after first concat part1 : %s\n",part1);
+		//	printf("after first concat part1 : %s\n",part1);
 			strcat(part1,part3);
-			printf("final concat part1 : %s\n",part1);
+		//	printf("final concat part1 : %s\n",part1);
 			return part1;
 			break;
 		}
@@ -222,7 +223,7 @@ int ex(nodeType *p){
 			printf("%d ",p->lit.value);
 			break;
 		case typeVar:
-			printf("%s ",p->var.name);
+			printf("%s; ",p->var.name);
 			break;
 		case typeStr:
 			printf("%s ",p->str.name);
@@ -233,10 +234,46 @@ int ex(nodeType *p){
 			
 			
 		       	switch(p->op.operation){
+				case 280://printf
+					{
+						char* child = readExpr(p->op.operands[0]);
+						printf("\nprintf(\"%s\",%s);","%d",child);
+					}
+					break;
+				case 274://end-->}
+					printf("}\n");
+					break;
+				case 277: //program --> printing {
+					printf("{\n");
+					break;				
 				case 267: //semicolon
 					addToBuffer(buffer,getStringForConstant(p->op.operation));
 					break;
 				case 266: //equals
+					{					
+				//		printf("entering in to =");
+						char *lhs, *rhs;
+						lhs = readExpr(p->op.operands[0]);
+					 	nodeType* node= p->op.operands[1];
+						// if 2nd child is scanf
+						if(node->op.operation == 281 )
+						{	
+							rhs = getStringForConstant(node->op.operation);
+							char ampercentAndVariable[] = "&";
+							strcat(ampercentAndVariable, lhs);
+				//			printf("\nampercent variable =%s\n", ampercentAndVariable);
+							printf("\nscanf(\"%s\",%s);","%d",ampercentAndVariable);
+						}
+						else
+						{							
+							rhs = readExpr(p->op.operands[1]);
+							printf("\n%s = %s;",lhs,rhs);
+						}						
+					}	
+					initializeBuffer(buffer);
+					break;
+
+					/*
 					addToBuffer(buffer,getStringForConstant(p->op.operation));
 					nodeType* left;
 					nodeType* right;
@@ -273,32 +310,36 @@ int ex(nodeType *p){
 					initializeBuffer(buffer);
 					//printf("Left content : %s\n",left->var.name);
 					//printf("Right content : %d\n",right->lit.value);
-					return;
+					return;*/
 			 	case 270: {//If case
-					//printf("**Num_ops in IF case : %d\n",p->op.num_ops);	
+					//printf("**Num od children in for IF : %d\n",p->op.num_ops);	
 					nodeType* condition = p->op.operands[0];
 					//printf("Op operation value :  %d\n",condition->op.operation);
 					//printf("No. of children of < = %d\n",condition->op.num_ops);
 					//printf("left expr = %s\n",readExpr(condition->op.operands[0]));		
 					//printf("right expr = %s\n",readExpr(condition->op.operands[1]));	
-					printf("if (%s %s %s){",readExpr(condition->op.operands[0]),getStringForConstant(condition->op.operation),
+					printf("\nif (%s %s %s){",readExpr(condition->op.operands[0]),getStringForConstant(condition->op.operation),
 						readExpr(condition->op.operands[1]));
 					/*if(p->op.operands[2]!=NULL)
 						printf("NOT NULL");
 					else
 						printf(">>>>>>>>>>>>>>>>>>>Operands of 2 isNULL\n");*/
-					p = p->op.operands[1];			
+					//p = p->op.operands[1];			
 					}
 					break;
-				case 275: {
-					printf("+++ While +++\n");
+				case 275: {//while case
+					//printf("+++ While +++\n");
 					nodeType* condition1 = p->op.operands[0];
-					printf("++ ---\n ");
-					printf("while (%s %s %s){",readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
+					//printf("++ ---\n ");
+					printf("\nwhile (%s %s %s){",readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
 						readExpr(condition1->op.operands[1]));
-					p = p->op.operands[1];			
+					//p = p->op.operands[1];			
 
 					}
+					break;
+				case 272: //else case
+					printf("\n}else{\n");
+					p = p->op.operands[0];
 					break;
 				}	
 
@@ -307,6 +348,18 @@ int ex(nodeType *p){
 			while(count<p->op.num_ops){
 				nodeType* tmpNode = p->op.operands[count];
 				count += 1;
+				// when p is poiting to one of "IF"/"WHILE" its first child will be expression which will be already printed. So need not call ex() on that child here again
+				//Hence, avoiding calling ex() on first child of if
+				if(p->op.operation==270  && count == 1)
+					continue;
+				// and also similar to while
+				if(p->op.operation==275  && count == 1)
+					continue;
+				//if p is pointing to "=" then we would have already written both children/ so just skil entire loop itself because all, LHS=RHS is already written to output
+				if(p->op.operation==266)
+					break;
+				if(p->op.operation==280)
+					break;
 				ex(tmpNode);
 			}
 			break;

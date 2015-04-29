@@ -28,7 +28,7 @@ void addToBuffer(char* buffer[],char str[]){
 	tmp =(char *) malloc(len*sizeof(char));
 	strcpy(tmp,str);
 	buffer[i]=tmp;
-	printf("									 #Added %s to buffer\n",buffer[i]);
+//	printf("									 #Added %s to buffer\n",buffer[i]);
 }
 
 void printBuffer(char* buffer[]){
@@ -43,7 +43,7 @@ void printBuffer(char* buffer[]){
 }
 
 void initializeBuffer(char *buffer[]){
-	printf("										*Initializing buffer \n");
+	//printf("										*Initializing buffer \n");
         int i = 0;
 	for(i=0;i<10;i++){
 		buffer[i]='\0';
