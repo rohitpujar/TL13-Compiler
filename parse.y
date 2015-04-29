@@ -1,8 +1,10 @@
 %{
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include "node.h"
 #include "bufferutil.h"
+#include <string.h>
 extern FILE *yyin;
 char* buffer[];
 typedef enum { false, true } bool;
@@ -170,6 +172,40 @@ void printNode(nodeType* tmpNode){
 	}
 }
 
+
+char* readExpr(nodeType* p){
+	switch(p->type){
+		case typeVar:
+			return p->var.name;
+			break;
+		case typeLit:{
+			char* bufferForReadExpr[20];
+			//char* temp;
+			//strcpy(temp,bufferForReadExpr);
+			//bufferForReadExpr = NULL;
+			sprintf(bufferForReadExpr,"%d",p->lit.value);
+			printf("^buffer cint : %s\n",bufferForReadExpr);
+		 	return bufferForReadExpr; 
+			break;
+			}
+		case typeOp:{
+			char *part1,*part2,*part3;
+			part2 = getStringForConstant(p->op.operation);
+			part1 = readExpr(p->op.operands[0]);
+			part3 = readExpr(p->op.operands[1]);
+			if(part1!=NULL && part3!=NULL){
+				printf("part1 cont : %s\n",part1);
+				printf("part3 cont : %s\n",part3);
+			}
+		 	strcat(part1,part2);
+			strcat(part1,part3);
+			printf("final concat part1 : %s\n",part1);
+			return part1;
+			break;
+		}
+	}
+}
+
 int ex(nodeType *p){
 	//printf("	---------------------- Next Level -----------------------------\n");
 	if(!p){
@@ -189,7 +225,7 @@ int ex(nodeType *p){
 			break;
 		case typeOp:{
 			//printBuffer(buffer);
-			printf("%s ",getStringForConstant(p->op.operation));
+			//printf("%s ",getStringForConstant(p->op.operation));
 			
 			
 		       	switch(p->op.operation){
@@ -234,7 +270,34 @@ int ex(nodeType *p){
 					//printf("Left content : %s\n",left->var.name);
 					//printf("Right content : %d\n",right->lit.value);
 					return;
-			} 
+			 	case 270: {//If case
+					//printf("**Num_ops in IF case : %d\n",p->op.num_ops);	
+					nodeType* condition = p->op.operands[0];
+					//printf("Op operation value :  %d\n",condition->op.operation);
+					//printf("No. of children of < = %d\n",condition->op.num_ops);
+					//printf("left expr = %s\n",readExpr(condition->op.operands[0]));		
+					//printf("right expr = %s\n",readExpr(condition->op.operands[1]));	
+					printf("if (%s %s %s){",readExpr(condition->op.operands[0]),getStringForConstant(condition->op.operation),
+						readExpr(condition->op.operands[1]));
+					/*if(p->op.operands[2]!=NULL)
+						printf("NOT NULL");
+					else
+						printf(">>>>>>>>>>>>>>>>>>>Operands of 2 isNULL\n");*/
+					p = p->op.operands[1];			
+					}
+					break;
+				case 275: {
+					printf("+++ While +++\n");
+					nodeType* condition1 = p->op.operands[0];
+					printf("++ ---\n ");
+					printf("while (%s %s %s){",readExpr(condition1->op.operands[0]),getStringForConstant(condition1->op.operation),
+						readExpr(condition1->op.operands[1]));
+					p = p->op.operands[1];			
+
+					}
+					break;
+				}	
+
 			//printBuffer(buffer);
 			int count = 0;	
 			while(count<p->op.num_ops){
