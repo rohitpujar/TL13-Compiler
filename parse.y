@@ -6,6 +6,7 @@
 #include "bufferutil.h"
 #include <string.h>
 extern FILE *yyin;
+extern yylineno;
 char* buffer[1];
 char bufferForReadExpr[20];
 typedef enum { false, true } bool;
@@ -52,57 +53,61 @@ program:
 	} 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);printf("---- Reducing to declarations production\n"); }
-	| { $$ = NULL; printf("---- Reducing to declarations production\n"); }
+	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);}//printf("---- Reducing to declarations production\n"); 
+	| { $$ = NULL; /*printf("---- Reducing to declarations production\n")*/; }
 	;
 type:
-	INT { $$ = str("int"); printf("^^^^ Reducing to type production\n"); }
-	| BOOL { $$ = str("bool"); printf("^^^^ Reducing to type production\n");}
+	INT { $$ = str("int");} // printf("^^^^ Reducing to type production\n"); 
+	| BOOL { $$ = str("bool"); /*printf("^^^^ Reducing to type production\n");*/ }
 	;
 statementSequence:
-	statement SC statementSequence { $$ = opr(SC, 2, $1, $3); printf("---- Reducing to statementSequence production \n"); }
-	| { $$ = NULL; printf("---- Reducing to statementSequence production \n");}
+	statement SC statementSequence { $$ = opr(SC, 2, $1, $3); /*printf("---- Reducing to statementSequence production \n");*/ }
+	| { $$ = NULL; /*printf("---- Reducing to statementSequence production \n")*/;}
 	;
 statement:
-	assignment { $$ = $1;printf("---- Reducing to statement production \n"); }
-	| ifStatement { $$ = $1; printf("---- Reducing to statement production \n"); }
-	| whileStatement { $$ = $1; printf("---- Reducing to statement production \n");}
-	| writeInt { $$ = $1; printf("---- Reducing to statement production \n");}
+	assignment { $$ = $1;/*printf("---- Reducing to statement production \n");*/ }
+	| ifStatement { $$ = $1; /*printf("---- Reducing to statement production \n");*/ }
+	| whileStatement { $$ = $1; /*printf("---- Reducing to statement production \n");*/}
+	| writeInt { $$ = $1; /*printf("---- Reducing to statement production \n");*/}
 	;
 assignment:
-	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); printf("---- Reducing to assignment production \n");}
-	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); printf("---- Reducing to assignment production \n");}
+	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); /*printf("---- Reducing to assignment production \n");*/}
+	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); /*printf("---- Reducing to assignment production \n");*/}
 	;
 ifStatement:
-	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 4, $2, $4, $5, str("end")); printf("---- Reducing to ifstatement production \n");}
+	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 4, $2, $4, $5, str("end")); /*printf("---- Reducing to ifstatement production \n");*/}
 	;
 elseClause:
-	ELSE statementSequence { $$ = opr(ELSE, 1, $2);printf("---- Reducing to elseclause production \n"); }
-	| { $$ = NULL; printf("---- Reducing to elseclause production \n");}
+	ELSE statementSequence { $$ = opr(ELSE, 1, $2);/*printf("---- Reducing to elseclause production \n");*/ }
+	| { $$ = NULL; /*printf("---- Reducing to elseclause production \n");*/}
 	;
 whileStatement:
-	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end"));printf("---- Reducing to whilestatement production \n"); }
+	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end")); /*printf("---- Reducing to whilestatement production \n");*/ }
 	;
 writeInt:
-	WRITEINT expression { $$ = opr(WRITEINT, 1, $2);printf("---- Reducing to writeInt production \n"); }
+	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); /*printf("---- Reducing to writeInt production \n"); */ }
 	;
 expression:
-	simpleExpression { $$ = $1; printf("==== Reducing to expression \n");}
-	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); printf("==== Reducing to expression production\n");}
+	simpleExpression { $$ = $1; /*printf("==== Reducing to expression \n");*/}
+	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); /*printf("==== Reducing to expression production\n");*/}
 	;
 simpleExpression:
-	term OP3 term { $$ = opr($2, 2, $1, $3); printf("==== Reducing to simpleexpression production\n");}
-	| term { $$ = $1; printf(" *** Reducing to simpleexpression production \n");}
+	term OP3 term { $$ = opr($2, 2, $1, $3); /*printf("==== Reducing to simpleexpression production\n");*/}
+	| term { $$ = $1; /*printf(" *** Reducing to simpleexpression production \n");*/}
 	;
 term:
-	factor OP2 factor { $$ = opr($2, 2, $1, $3);printf(" #### Reducing to term production \n"); }
-	| factor { $$ = $1; printf(" #### Reducing to term production \n");}
+	factor OP2 factor { $$ = opr($2, 2, $1, $3);/*printf(" #### Reducing to term production \n"); */}
+	| factor { $$ = $1; /*printf(" #### Reducing to term production \n");*/}
 	;
 factor:
-	ident { $$ = var($1);printf("```` Reducing to factor production\n"); }
-	| num { $$ = lit($1); printf("```` Reducing to factor production\n"); }
-	| boollit { $$ = lit($1); printf("```` Reducing to factor production\n");}
-	| LP expression RP { $$ = $2; printf("```` Reducing to factor production\n");}
+	ident { $$ = var($1);/*printf("```` Reducing to factor production\n"); */}
+	| num { //printf("\n\n[[[[[[[[[[[[[[[[[ %d ]]]]]]]]]]]]]]]]] \n\n",$1); 
+		if(!($1>=-2147483647 && $1<=2147483647)){
+			yyerror("Integer overflow occured at line number ");
+		}
+		$$ = lit($1); /*printf("```` Reducing to factor production\n"); */}
+	| boollit { $$ = lit($1); /*printf("```` Reducing to factor production\n");*/}
+	| LP expression RP { $$ = $2; /*printf("```` Reducing to factor production\n");*/}
 	;
 %%
 
@@ -374,8 +379,10 @@ nodeType* opr(int operation, int num_ops, ...) {
 }
 
 int yyerror (char *s) {
-	printf("%s\n", s);
-	printf("String not accepted\n\n");
+	 //printf("%s\n", s);
+	 //printf("%d: %s at %s\n", yylineno, s, yytext);
+	 printf("Error : %s : %d \n",s,yylineno);
+	 //printf("String not accepted\n\n");
 	//exit(-1);
 }
 
