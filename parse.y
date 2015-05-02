@@ -96,7 +96,13 @@ simpleExpression:
 	| term { $$ = $1; /*printf(" *** Reducing to simpleexpression production \n");*/}
 	;
 term:
-	factor OP2 factor { $$ = opr($2, 2, $1, $3);/*printf(" #### Reducing to term production \n"); */}
+	factor OP2 factor { $$ = opr($2, 2, $1, $3); 
+	/*printf("------------------------------- %d : %d \n",$2,$3);
+	if($2 == 1 && $3 == 0){
+		printf(">>>>>>>>>>>>>>>>>>>>>>>> %d \n",$2);printf(" #### Reducing to term production \n"); 
+		yyerror("Divide by zero error ");
+	} */
+	}
 	| factor { $$ = $1; /*printf(" #### Reducing to term production \n");*/}
 	;
 factor:
@@ -382,7 +388,7 @@ int yyerror (char *s) {
 	 //printf("%s\n", s);
 	 //printf("%d: %s at %s\n", yylineno, s, yytext);
 	 printf("Error : %s : %d \n",s,yylineno);
-	 //printf("String not accepted\n\n");
+	 printf("Syntax Error\n\n");
 	//exit(-1);
 }
 
