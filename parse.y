@@ -4,12 +4,141 @@
 #include <stdarg.h>
 #include "node.h"
 #include "bufferutil.h"
+#include "structurehash.h"
 #include <string.h>
 extern FILE *yyin;
 extern yylineno;
 char* buffer[1];
 char bufferForReadExpr[20];
 typedef enum { false, true } bool;
+typedef size_t hash_size;
+char hashKeyArray[20][20];
+int hashCounter=0;
+
+static hash_size def_hashfunc(const char *key)
+{
+    hash_size hash=0;
+    
+    while(*key) hash+=(unsigned char)*key++;
+
+    return hash;
+}
+
+HASHTBL *hashtbl;
+
+static char *mystrdup(const char *s)
+{
+    char *b;
+    if(!(b=malloc(strlen(s)+1))) return NULL;
+    strcpy(b, s);
+    return b;
+}
+
+void *hashtbl_get(HASHTBL *hashtbl, const char *key)
+{
+    struct hashnode_s *node;
+    hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+
+/*    fprintf(stderr, "hashtbl_get() key=%s, hash=%d\n", key, hash);*/
+
+    node=hashtbl->nodes[hash];
+    while(node) {
+        if(!strcmp(node->key, key)) {
+		//printf("\n\n*hashtbl_get now returning %s\n",node->key);
+		return node->key;
+	}
+        node=node->next;
+    }
+
+    return NULL;
+}
+
+void *hashtbl_getdec(HASHTBL *hashtbl, const char *key)
+{
+      struct hashnode_s *node;
+      hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+      node=hashtbl->nodes[hash];
+      while(node){
+      if(!strcmp(node->key, key))return node->declaration;
+      node=node->next;
+      }
+      return NULL;
+}
+
+void *hashtbl_gettype(HASHTBL *hashtbl, const char *key)
+{
+       struct hashnode_s *node;
+       hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+       node=hashtbl->nodes[hash];
+       while(node){
+       if(!strcmp(node->key, key))return node->type;
+       node=node->next;
+       }
+       return NULL;
+}
+int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *type, void *declaration)
+{
+    int index=0; 
+    //printf("## Values recvd for insert - key = %s, type = %s, declaration = %s\n",key,(char*)type,(char*)declaration);
+    //printf("*** Inserting :  key = %s, type = %s, decl = %s \n",key,type,declaration);
+    for(index=0;index<hashCounter;index++){
+	if(strcmp(hashKeyArray[index],key)==0)	
+		break;
+    }
+    //printf("HashCounter Value : %d\n",hashCounter);
+    if(index==hashCounter){
+	    strcpy(hashKeyArray[hashCounter],key);
+	    //printf("######Hashkeyarray[%d] :  %s\n",hashCounter,hashKeyArray[hashCounter]);
+	    hashCounter += 1;
+	    
+	}
+    //printf(".......Hashkeyarray[0] :  %s\n",hashCounter,hashKeyArray[0]);
+   // printf("hashtbl value for 0th element : %s\n",hashtbl_get(hashtbl,hashKeyArray[0]));
+    struct hashnode_s *node;
+    hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+    node=hashtbl->nodes[hash];
+    while(node) {
+        if(!strcmp(node->key, key)) {
+                        node->type=type;
+                        node->declaration=declaration;
+            return 0;
+        }
+        node=node->next;
+    }
+        if(!(node=malloc(sizeof(struct hashnode_s)))) return -1;
+    if(!(node->key=mystrdup(key))) {
+        free(node);
+        return -1;
+    }
+        node->type=type;
+        node->declaration=declaration;
+    node->next=hashtbl->nodes[hash];
+    hashtbl->nodes[hash]=node;
+        //else
+        //return 0;
+}
+
+
+
+HASHTBL *hashtbl_create(hash_size size, hash_size (*hashfunc)(const char *))
+{
+    HASHTBL *hashtbl;
+
+    if(!(hashtbl=malloc(sizeof(HASHTBL)))) return NULL;
+
+    if(!(hashtbl->nodes=calloc(size, sizeof(struct hashnode_s*)))) {
+        free(hashtbl);
+        return NULL;
+    }
+
+    hashtbl->size=size;
+
+    if(hashfunc) hashtbl->hashfunc=hashfunc;
+    else hashtbl->hashfunc=def_hashfunc;
+
+    return hashtbl;
+}
+
 
 //Function prototypes
 nodeType* opr(int operation, int num_ops, ...);
@@ -53,8 +182,16 @@ program:
 	} 
 	;
 declarations:
-	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);}//printf("---- Reducing to declarations production\n"); 
-	| { $$ = NULL; /*printf("---- Reducing to declarations production\n")*/; }
+	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);
+	if(hashtbl_get(hashtbl,$2)==NULL){
+		hashtbl_insert(hashtbl,$2,toString($4),"temp");
+	}else{
+		yyerror("Variable already declared error at line number ");
+	}
+	}
+	//printf("---- Reducing to declarations production\n"); 
+	| { $$ = NULL; 
+	 }
 	;
 type:
 	INT { $$ = str("int");} // printf("^^^^ Reducing to type production\n"); 
@@ -393,6 +530,7 @@ int yyerror (char *s) {
 }
 
 int main(int argc, char** argv) {
+ 	hashtbl = hashtbl_create(1000,NULL);
 	++argv, --argc;
 	if (argc > 0)
 		yyin = fopen(argv[0], "r");
@@ -400,6 +538,7 @@ int main(int argc, char** argv) {
 		yyin = stdin;
 	do {
 		yyparse();
+		printf("Printing hashtbl content : %s\n",hashtbl_gettype(hashtbl,"P"));
 	} while (!feof(yyin));
 	printf("String accepted\n\n");
 }

@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "node.h"
 #include "parse.tab.h"
+#include "structurehash.h"//has related code
+typedef size_t hash_size;
+//extern char hashKeyArray[20][20];
+extern HASHTBL *hashtbl;
 //int yylineno = 1;
 %}
 
@@ -43,6 +47,7 @@ false|true	{
 			//printf("	Lex yylval : %s\n",yylval);
 			//printf("	Lex yytext : %s\n",yytext);
 			//printf("\nFrom LEX: returning token=ident with value=%s\n", yylval.sString);
+			//hashtbl_insert(hashtbl, yytext, "ident","decl");
 			return ident;
 		}
 "("		{
@@ -133,7 +138,7 @@ false|true	{
 			return READINT;
 		}
 
-[\n]		{yylineno++;}
+[\n]		{yylineno++;} 
 
 %%
 int stringToEnum(char* string)
