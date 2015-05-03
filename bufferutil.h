@@ -1,6 +1,18 @@
 #include<stdio.h>
 #include<string.h>
 
+
+char* toString(nodeType* node){
+	if(node->type == typeStr){
+	//	printf("__Returning value : %s\n",node->var.name);
+		return node->var.name;	
+	}
+ 	else{
+		printf("********* Not to be seen ******\n");
+	}
+}
+
+
 char* getElementAtIndex(char* buffer[], int index)
 {
 	if(buffer[0] == '\0')

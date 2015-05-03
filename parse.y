@@ -80,7 +80,7 @@ int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *type, void *declarat
 {
     int index=0; 
     //printf("## Values recvd for insert - key = %s, type = %s, declaration = %s\n",key,(char*)type,(char*)declaration);
-    //printf("*** Inserting :  key = %s, type = %s, decl = %s \n",key,type,declaration);
+    printf("*** Inserting :  key = %s, type = %s, decl = %s \n",key,type,declaration);
     for(index=0;index<hashCounter;index++){
 	if(strcmp(hashKeyArray[index],key)==0)	
 		break;
@@ -183,10 +183,14 @@ program:
 	;
 declarations:
 	VAR ident AS type SC declarations { $$ = opr(AS, 4, $4,var($2),opr(SC,0),$6);
-	if(hashtbl_get(hashtbl,$2)==NULL){
+        //printf("---- Hashtbl value for %s = %s\n",$2,hashtbl_gettype(hashtbl,$2));	
+	//printf(" 									Values supposed to be inserted, %s : %s\n",$2,toString($4));
+	if(hashtbl_gettype(hashtbl,$2)!=NULL){
+		//printf("Inserting values to hashtable, key : %s, value : %s\n",$2,toString($4));
 		hashtbl_insert(hashtbl,$2,toString($4),"temp");
-	}else{
 		yyerror("Variable already declared error at line number ");
+	}else{
+		hashtbl_insert(hashtbl,$2,toString($4),"temp");
 	}
 	}
 	//printf("---- Reducing to declarations production\n"); 
@@ -209,7 +213,13 @@ statement:
 	;
 assignment:
 	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); /*printf("---- Reducing to assignment production \n");*/}
-	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); /*printf("---- Reducing to assignment production \n");*/}
+	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); /*printf("---- Reducing to assignment production \n");*/
+	char* type = hashtbl_gettype(hashtbl,$1);
+	printf("<<<<<<<< Type : %s\n",type);
+	if(strcmp(type,"bool")==0){
+		yyerror("Boolean cannot be assigned int value, at line number ");
+	}
+	}
 	;
 ifStatement:
 	IF expression THEN statementSequence elseClause END { $$ = opr(IF, 4, $2, $4, $5, str("end")); /*printf("---- Reducing to ifstatement production \n");*/}
