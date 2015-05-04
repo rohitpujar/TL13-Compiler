@@ -222,7 +222,7 @@ statement:
 	| writeInt { $$ = $1; /*printf("---- Reducing to statement production \n");*/}
 	;
 assignment:
-	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); /*printf("---- Reducing to assignment production \n");*/
+	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); //printf("---- Reducing to assignment production \n");
 	int decl = checkDeclared($1);
 	if(decl == 1){
 	}
