@@ -259,7 +259,14 @@ elseClause:
 	| { $$ = NULL; /*printf("---- Reducing to elseclause production \n");*/}
 	;
 whileStatement:
-	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end")); /*printf("---- Reducing to whilestatement production \n");*/ }
+	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end")); /*printf("---- Reducing to whilestatement production \n");*/ 
+	nodeType* whilestmtNode = $2;
+	if(whilestmtNode->type == typeLit){
+		printf("* While condition stmt content is BOOLEAN \n");
+	}else{
+		printf("* While condition stmt content is EXPRESSION\n");	
+	} 
+}
 	;
 writeInt:
 	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); /*printf("---- Reducing to writeInt production \n"); */ 
@@ -287,16 +294,27 @@ expression:
 	| simpleExpression OP4 simpleExpression { $$ = opr($2, 2, $1, $3); /*printf("==== Reducing to expression production\n");*/}
 	;
 simpleExpression:
-	term OP3 term { $$ = opr($2, 2, $1, $3); /*printf("==== Reducing to simpleexpression production\n");*/}
+	term OP3 term { $$ = opr($2, 2, $1, $3); /*printf("==== Reducing to simpleexpression production\n");*/
+	nodeType* factorNode1 = $1;
+	nodeType* factorNode2 = $3;
+	char* ident1type = hashtbl_gettype(hashtbl,factorNode1->var.name);
+	char* ident2type = hashtbl_gettype(hashtbl,factorNode2->var.name);
+	if(strcmp("int",ident1type)!=0 || strcmp("int",ident2type)){
+		yyerror("Expression contains variables other than int, at line number ");
+	}
+	}
 	| term { $$ = $1; /*printf(" *** Reducing to simpleexpression production \n");*/}
 	;
 term:
 	factor OP2 factor { $$ = opr($2, 2, $1, $3); 
-	/*printf("------------------------------- %d : %d \n",$2,$3);
-	if($2 == 1 && $3 == 0){
-		printf(">>>>>>>>>>>>>>>>>>>>>>>> %d \n",$2);printf(" #### Reducing to term production \n"); 
-		yyerror("Divide by zero error ");
-	} */
+	nodeType* factorNode1 = $1;
+	nodeType* factorNode2 = $3;
+	char* ident1type = hashtbl_gettype(hashtbl,factorNode1->var.name);
+	char* ident2type = hashtbl_gettype(hashtbl,factorNode2->var.name);
+	if(strcmp("int",ident1type)!=0 || strcmp("int",ident2type)){
+		yyerror("Expression contains variables other than int, at line number ");
+	}
+	
 	}
 	| factor { $$ = $1; /*printf(" #### Reducing to term production \n");*/}
 	;
@@ -403,6 +421,7 @@ char* readExpr(nodeType* p){
 			return p->var.name;
 			break;
 		case typeLit:{
+			printf("						Lit value = %d\n",p->lit.value);
 			sprintf(bufferForReadExpr,"%d",p->lit.value);
 			char* temp = malloc(sizeof(bufferForReadExpr));
 			strcpy(temp,bufferForReadExpr);
@@ -596,7 +615,7 @@ int yyerror (char *s) {
 	 //printf("%s\n", s);
 	 //printf("%d: %s at %s\n", yylineno, s, yytext);
 	 printf("Error : %s : %d \n",s,yylineno);
-	 //printf("Syntax Error\n\n");
+	 printf("Syntax Error\n\n");
 	//exit(-1);
 }
 
@@ -609,7 +628,6 @@ int main(int argc, char** argv) {
 		yyin = stdin;
 	do {
 		yyparse();
-		printf("parsedTillBegin : %d\n",parsedTillBegin);
 		
 	} while (!feof(yyin));
 	//printf("String accepted\n\n");
