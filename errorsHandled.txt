@@ -1,0 +1,18 @@
+To be handled:
+
+10. The expression guarding if-statements and while-loops must be boolean.
+11. The literals "false" and "true" are boolean constants.
+3. The OP4 operators create boolean results.
+6. The left-hand of assignment must be a variable, and the right-hand side must be an expression of the variable's type.
+7. When used as a value, a variable's type is its declared type.
+
+Errors handled
+--------------
+
+12. The literal numbers 0 through 2147483647 are integer constants. Numbers outside of that range should be flagged as illegal.
+5. Each variables may only be declared once.
+8. Only integer variables may be assigned the result of readInt.
+4. All variables must be declared with a particular type.
+9. writeInt's expression must evaluate to an integer.
+1. The operands of all OP2, OP3, and OP4 operators must be integers
+2. The OP2 and OP3 operators create an integer result.--
