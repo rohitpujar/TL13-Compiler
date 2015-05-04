@@ -6,14 +6,18 @@
 #include "bufferutil.h"
 #include "structurehash.h"
 #include <string.h>
+
 extern FILE *yyin;
 extern yylineno;
+extern parsedTillBegin;
 char* buffer[1];
 char bufferForReadExpr[20];
 typedef enum { false, true } bool;
 typedef size_t hash_size;
 char hashKeyArray[20][20];
 int hashCounter=0;
+HASHTBL *hashtbl;
+
 
 static hash_size def_hashfunc(const char *key)
 {
@@ -24,7 +28,6 @@ static hash_size def_hashfunc(const char *key)
     return hash;
 }
 
-HASHTBL *hashtbl;
 
 static char *mystrdup(const char *s)
 {
@@ -80,7 +83,7 @@ int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *type, void *declarat
 {
     int index=0; 
     //printf("## Values recvd for insert - key = %s, type = %s, declaration = %s\n",key,(char*)type,(char*)declaration);
-    printf("*** Inserting :  key = %s, type = %s, decl = %s \n",key,type,declaration);
+    //printf("*** Inserting :  key = %s, type = %s, decl = %s \n",key,type,declaration);
     for(index=0;index<hashCounter;index++){
 	if(strcmp(hashKeyArray[index],key)==0)	
 		break;
@@ -140,6 +143,13 @@ HASHTBL *hashtbl_create(hash_size size, hash_size (*hashfunc)(const char *))
 }
 
 
+int checkDeclared(char* ident){
+	if(hashtbl_gettype(hashtbl,ident)!=NULL){
+		return 1;
+	}else{
+		return 0;
+	}
+}
 //Function prototypes
 nodeType* opr(int operation, int num_ops, ...);
 nodeType* var(char* name);
@@ -212,13 +222,33 @@ statement:
 	| writeInt { $$ = $1; /*printf("---- Reducing to statement production \n");*/}
 	;
 assignment:
-	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); /*printf("---- Reducing to assignment production \n");*/}
+	ident ASGN expression { $$ = opr(ASGN, 2, var($1), $3); /*printf("---- Reducing to assignment production \n");*/
+	int decl = checkDeclared($1);
+	if(decl == 1){
+	}
+	else{
+		char* yyhelp;
+		yyhelp = malloc(sizeof($1));
+		strcpy(yyhelp,$1);
+		yyerror(strcat(yyhelp," is not declared, at line number "));
+	}	
+	
+	}
 	| ident ASGN READINT { $$ = opr(ASGN, 2, var($1), opr(READINT,0)); /*printf("---- Reducing to assignment production \n");*/
 	char* type = hashtbl_gettype(hashtbl,$1);
-	printf("<<<<<<<< Type : %s\n",type);
+	//printf("<<<<<<<< Type : %s\n",type);
 	if(strcmp(type,"bool")==0){
 		yyerror("Boolean cannot be assigned int value, at line number ");
 	}
+			int decl = checkDeclared($1);
+			if(decl == 1){
+			}
+			else{
+				char* yyhelp;
+				yyhelp = malloc(sizeof($1));
+				strcpy(yyhelp,$1);
+				yyerror(strcat(yyhelp," is not declared, at line number "));
+			}	
 	}
 	;
 ifStatement:
@@ -232,7 +262,25 @@ whileStatement:
 	WHILE expression DO statementSequence END { $$ = opr(WHILE, 3, $2, $4,str("end")); /*printf("---- Reducing to whilestatement production \n");*/ }
 	;
 writeInt:
-	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); /*printf("---- Reducing to writeInt production \n"); */ }
+	WRITEINT expression { $$ = opr(WRITEINT, 1, $2); /*printf("---- Reducing to writeInt production \n"); */ 
+	nodeType* test = $2;
+	int decl = checkDeclared(test->var.name);
+	if(decl == 1){
+		//printf("<<<<<<< Test type : %s\n",test->var.name);
+		if(strcmp(hashtbl_gettype(hashtbl,test->var.name),"int")!=0){
+					char* yyhelp;
+					yyhelp = malloc(sizeof(test->var.name));
+					strcpy(yyhelp,test->var.name);
+					yyerror(strcat(yyhelp," writeInt expression should evaluate to integer, at line number "));
+		} 
+	}
+	else{
+		char* yyhelp;
+		yyhelp = malloc(sizeof(test->var.name));
+		strcpy(yyhelp,test->var.name);
+		yyerror(strcat(yyhelp," is not declared, at line number "));
+	}	
+	}
 	;
 expression:
 	simpleExpression { $$ = $1; /*printf("==== Reducing to expression \n");*/}
@@ -253,8 +301,21 @@ term:
 	| factor { $$ = $1; /*printf(" #### Reducing to term production \n");*/}
 	;
 factor:
-	ident { $$ = var($1);/*printf("```` Reducing to factor production\n"); */}
-	| num { //printf("\n\n[[[[[[[[[[[[[[[[[ %d ]]]]]]]]]]]]]]]]] \n\n",$1); 
+	ident { $$ = var($1); //printf("```` Reducing to factor production\n"); 
+		//if(parsedTillBegin == 0){
+		//}else{
+			int decl = checkDeclared($1);
+			if(decl == 1){
+			}
+			else{
+				char* yyhelp;
+				yyhelp = malloc(sizeof($1));
+				strcpy(yyhelp,$1);
+				yyerror(strcat(yyhelp," is not declared, at line number "));
+			}	
+	//	}
+	}
+	| num { 
 		if(!($1>=-2147483647 && $1<=2147483647)){
 			yyerror("Integer overflow occured at line number ");
 		}
@@ -535,7 +596,7 @@ int yyerror (char *s) {
 	 //printf("%s\n", s);
 	 //printf("%d: %s at %s\n", yylineno, s, yytext);
 	 printf("Error : %s : %d \n",s,yylineno);
-	 printf("Syntax Error\n\n");
+	 //printf("Syntax Error\n\n");
 	//exit(-1);
 }
 
@@ -548,7 +609,8 @@ int main(int argc, char** argv) {
 		yyin = stdin;
 	do {
 		yyparse();
-		printf("Printing hashtbl content : %s\n",hashtbl_gettype(hashtbl,"P"));
+		printf("parsedTillBegin : %d\n",parsedTillBegin);
+		
 	} while (!feof(yyin));
-	printf("String accepted\n\n");
+	//printf("String accepted\n\n");
 }

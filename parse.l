@@ -6,6 +6,7 @@
 typedef size_t hash_size;
 //extern char hashKeyArray[20][20];
 extern HASHTBL *hashtbl;
+int parsedTillBegin = 0;
 //int yylineno = 1;
 %}
 
@@ -94,6 +95,7 @@ false|true	{
 			return ELSE;
 		}
 "begin"		{
+			parsedTillBegin=1;
 			//printf("\nFrom LEX: returning token=BEGIN_STMT with value=NULL" );
 			return BEGIN_STMT;
 		}
